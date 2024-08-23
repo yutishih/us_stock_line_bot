@@ -39,9 +39,10 @@ def get_realtime_stock_price(symbol):
             return f"No symbol found for {symbol}"
         
         quote = finnhub_client.quote(actual_symbol)
-        return f"{actual_symbol}\n Current: {quote['c']} USD\n Open: {quote['o']} USD\n High: {quote['h']} USD\n Lowest: {quote['l']} USD\n Prev-Close: {quote['pc']} USD"
+        return f"{actual_symbol}\nCurrent: {quote['c']} USD\nOpen: {quote['o']} USD\nHigh: {quote['h']} USD\nLowest: {quote['l']} USD\nsPrev-Close: {quote['pc']} USD"
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"韭菜就乖乖等著被割"
+        # return f"Error: {str(e)}"
 
 # Domain root
 @app.route('/')

@@ -11,7 +11,7 @@ def lookup_symbol(query):
         result = finnhub_client.symbol_lookup(query)
         if result['count'] > 0:
             # Print result to debug
-            # print("Symbol Lookup Result:", result)
+            print("Symbol Lookup Result:", result)
             # Only return the first symbol
             return result['result'][0]['displaySymbol']
         else:
