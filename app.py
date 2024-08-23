@@ -18,11 +18,28 @@ finnhub_client = finnhub.Client(api_key=os.getenv("FINNHUB_API_KEY"))
 line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 
+# Lookup Stock Symbol
+def lookup_symbol(query):
+    try:
+        result = finnhub_client.symbol_lookup(query)
+        if result['count'] > 0:
+            return result['result'][0]['displaySymbol']
+        else:
+            return None
+    except Exception as e:
+        print("Error during symbol lookup:", e)
+        return None
+
 # Api function
 def get_realtime_stock_price(symbol):
     try:
-        quote = finnhub_client.quote(symbol)
-        return f"{symbol}\n Current: {quote['c']} USD\n Open: {quote['o']} USD\n High: {quote['h']} USD\n Lowest: {quote['l']} USD\n Prev-Close: {quote['pc']} USD"
+        actual_symbol = lookup_symbol(symbol)
+        print("Actual Symbol:", actual_symbol)
+        if not actual_symbol:
+            return f"No symbol found for {symbol}"
+        
+        quote = finnhub_client.quote(actual_symbol)
+        return f"{actual_symbol}\n Current: {quote['c']} USD\n Open: {quote['o']} USD\n High: {quote['h']} USD\n Lowest: {quote['l']} USD\n Prev-Close: {quote['pc']} USD"
     except Exception as e:
         return f"Error: {str(e)}"
 
