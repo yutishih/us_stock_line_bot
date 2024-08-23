@@ -59,11 +59,3 @@ def handle_message(event):
             )
         except LineBotApiError as e:
             app.logger.error(f"Error sending reply: {e}")
-    else:
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text="Please USE the format: US <stock_quote>")
-        )
-
-if __name__ == "__main__":
-    app.run()
