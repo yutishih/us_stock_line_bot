@@ -1,18 +1,22 @@
+from dotenv import load_dotenv
 from flask import Flask, request, abort
-from linebot.v3 import WebhookHandler
-from linebot.v3.exceptions import InvalidSignatureError
-from linebot.v3.messaging import Configuration, ReplyMessageRequest, TextMessage
-from linebot.v3.webhooks import MessageEvent, TextMessageContent
+from linebot import LineBotApi
+from linebot.models import TextSendMessage, TextMessage, MessageEvent
+from linebot.exceptions import LineBotApiError, InvalidSignatureError
+from linebot import WebhookHandler
 import finnhub
+import os
 
 app = Flask(__name__)
 
-# Initialize Finnhub API client
-finnhub_client = finnhub.Client(api_key='cr3cjj9r01qk9rv5cuk0cr3cjj9r01qk9rv5cukg')
+load_dotenv()
 
-# LINE Channel Access Token & Channel Secret
-line_bot_api = Configuration(access_token='8sS5BQ38SPvL1bTibV6aDggk2OQPtZyjHx71dZWhQr66C8EdnrCLVEwQ6tbzvclp9cyaA9K7H3kDaoDEYjcDCB8WTpjS1a4CUuSH0YEcV+GQgUR1O0I60dgho4e/PJe9yVhDNcA5Mudw6Y4HYMhZfwdB04t89/1O/w1cDnyilFU=')
-handler = WebhookHandler('4631c0fbbabdf5efeb70405d038f1a35')
+# Initialize Finnhub API client
+finnhub_client = finnhub.Client(api_key=os.getenv("FINNHUB_API_KEY"))
+
+# Initialize LINE bot API
+line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
+handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 
 # Api function
 def get_realtime_stock_price(symbol):
@@ -31,7 +35,6 @@ def home():
 @app.route("/callback", methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
-
     body = request.get_data(as_text=True)
     app.logger.info("Request body: " + body)
 
@@ -42,14 +45,17 @@ def callback():
 
     return 'OK'
 
-# Get client input
-@handler.add(MessageEvent, message=TextMessageContent)
+@handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     stock_symbol = event.message.text.strip().upper()
-
     stock_price_info = get_realtime_stock_price(stock_symbol)
-    line_bot_api.reply_message( ReplyMessageRequest( reply_token=event.reply_token, messages=[TextMessage(text=stock_price_info)]))
-
+    try:
+        line_bot_api.reply_message(
+            event.reply_token,
+            TextSendMessage(text=stock_price_info)
+        )
+    except LineBotApiError as e:
+        app.logger.error(f"Error sending reply: {e}")
 
 if __name__ == "__main__":
     app.run()
