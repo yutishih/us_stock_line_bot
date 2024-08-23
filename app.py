@@ -22,7 +22,7 @@ handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 def get_realtime_stock_price(symbol):
     try:
         quote = finnhub_client.quote(symbol)
-        return f"{symbol} Current: {quote['c']} USD\n Open: {quote['o']} USD\n High: {quote['h']} USD\n Lowest: {quote['l']} USD\n Prev-Close: {quote['pc']} USD"
+        return f"{symbol}\n Current: {quote['c']} USD\n Open: {quote['o']} USD\n High: {quote['h']} USD\n Lowest: {quote['l']} USD\n Prev-Close: {quote['pc']} USD"
     except Exception as e:
         return f"Error: {str(e)}"
 
