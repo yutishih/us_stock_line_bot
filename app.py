@@ -36,7 +36,8 @@ def get_realtime_stock_price(symbol):
         actual_symbol = lookup_symbol(symbol)
         print("Actual Symbol:", actual_symbol)
         if not actual_symbol:
-            return f"No symbol found for {symbol}"
+            # return f"No symbol found for {symbol}"
+            return f"大割是對的!"
         
         quote = finnhub_client.quote(actual_symbol)
         return f"{actual_symbol}\nCurrent: {quote['c']} USD\nOpen: {quote['o']} USD\nHigh: {quote['h']} USD\nLowest: {quote['l']} USD\nsPrev-Close: {quote['pc']} USD"
