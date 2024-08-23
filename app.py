@@ -1,7 +1,7 @@
 from flask import Flask, request, abort
-from linebot.v3 import WebhookHandler
+from linebot.v3 import LineBotApi, WebhookHandler
 from linebot.v3.exceptions import InvalidSignatureError
-from linebot.v3.messaging import Configuration, ReplyMessageRequest, TextMessage
+from linebot.v3.messaging import ReplyMessageRequest, TextMessage
 from linebot.v3.webhooks import MessageEvent, TextMessageContent
 import finnhub
 
@@ -11,7 +11,8 @@ app = Flask(__name__)
 finnhub_client = finnhub.Client(api_key='cr3cjj9r01qk9rv5cuk0cr3cjj9r01qk9rv5cukg')
 
 # LINE Channel Access Token & Channel Secret
-line_bot_api = Configuration(access_token='8sS5BQ38SPvL1bTibV6aDggk2OQPtZyjHx71dZWhQr66C8EdnrCLVEwQ6tbzvclp9cyaA9K7H3kDaoDEYjcDCB8WTpjS1a4CUuSH0YEcV+GQgUR1O0I60dgho4e/PJe9yVhDNcA5Mudw6Y4HYMhZfwdB04t89/1O/w1cDnyilFU=')
+line_bot_api = LineBotApi(access_token='8sS5BQ38SPvL1bTibV6aDggk2OQPtZyjHx71dZWhQr66C8EdnrCLVEwQ6tbzvclp9cyaA9K7H3kDaoDEYjcDCB8WTpjS1a4CUuSH0YEcV+GQgUR1O0I60dgho4e/PJe9yVhDNcA5Mudw6Y4HYMhZfwdB04t89/1O/w1cDnyilFU=')
+# line_bot_api = LineBotApi(os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler('4631c0fbbabdf5efeb70405d038f1a35')
 
 # Api function
