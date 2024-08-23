@@ -22,15 +22,6 @@ def get_realtime_stock_price(symbol):
     except Exception as e:
         return f"Error: {str(e)}"
 
-# Home page route
-@app.route("/")
-def home():
-    return "Welcome to the US Stock Line Bot!"
-
-@app.route("/favicon.ico")
-def favicon():
-    return "", 204  
-
 # Post Api
 @app.route("/callback", methods=['POST'])
 def callback():
