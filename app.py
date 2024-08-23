@@ -22,7 +22,7 @@ handler = WebhookHandler(os.getenv("LINE_CHANNEL_SECRET"))
 def get_realtime_stock_price(symbol):
     try:
         quote = finnhub_client.quote(symbol)
-        return f"{symbol} Current price: {quote['c']} USD\n Open price: {quote['o']} USD\n High price: {quote['h']} USD\n Lowest price: {quote['l']} USD\n Previous Close: {quote['pc']} USD"
+        return f"{symbol} Current: {quote['c']} USD\n Open: {quote['o']} USD\n High: {quote['h']} USD\n Lowest: {quote['l']} USD\n Prev-Close: {quote['pc']} USD"
     except Exception as e:
         return f"Error: {str(e)}"
 
@@ -47,15 +47,23 @@ def callback():
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    stock_symbol = event.message.text.strip().upper()
-    stock_price_info = get_realtime_stock_price(stock_symbol)
-    try:
+    message_text = event.message.text.strip().upper()
+
+    if message_text.startswith("US "):
+        stock_symbol = message_text[3:].strip()
+        stock_price_info = get_realtime_stock_price(stock_symbol)
+        try:
+            line_bot_api.reply_message(
+                event.reply_token,
+                TextSendMessage(text=stock_price_info)
+            )
+        except LineBotApiError as e:
+            app.logger.error(f"Error sending reply: {e}")
+    else:
         line_bot_api.reply_message(
             event.reply_token,
-            TextSendMessage(text=stock_price_info)
+            TextSendMessage(text="Please USE the format: US <stock_quote>")
         )
-    except LineBotApiError as e:
-        app.logger.error(f"Error sending reply: {e}")
 
 if __name__ == "__main__":
     app.run()
